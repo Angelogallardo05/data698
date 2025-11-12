@@ -141,6 +141,18 @@ insecurity_wider <-  insecurity_wider %>%
   mutate(PERPOV17_21 = as.factor(PERPOV17_21),METRO23= as.factor(METRO23), POPLOSS15 =as.factor(POPLOSS15) ) 
 ```
 
+```{r}
+insecurity_wider <- insecurity_wider %>%
+  # Replace -8888 and -9999 with NA in all numeric columns
+  mutate(across(where(is.numeric), ~replace(., . %in% c(-8888, -9999), NA))) %>%
+  # Also replace -8888 and -9999 with NA in factor-converted columns
+  mutate(
+    PERPOV17_21 = as.factor(replace(PERPOV17_21, PERPOV17_21 %in% c(-8888, -9999), NA)),
+    METRO23 = as.factor(replace(METRO23, METRO23 %in% c(-8888, -9999), NA)),
+    POPLOSS15 = as.factor(replace(POPLOSS15, POPLOSS15 %in% c(-8888, -9999), NA))
+  )
+```
+
 # Me
 
 ```{r}
@@ -148,7 +160,7 @@ insecurity_wider <-  insecurity_wider %>%
 ```
 
 ```{r}
-# Replace placeholders with NA to summarize
+# Replace placeholders with NA to summarize/ dont USE!!!
 insecurity_wider <- insecurity_wider %>%
   mutate(across(where(is.numeric), ~replace(., . %in% c(-8888, -9999), NA)))%>%
   mutate(across(where(is.numeric), ~round(., 2))) %>%
@@ -373,54 +385,46 @@ Handling NA's - Use median values by county level
 Outliers- remove extreme outliers
 
 ```{r}
+combined <- combined %>%
+  group_by(State) %>%
+  mutate(across(where(is.numeric), ~ifelse(is.na(.), median(., na.rm = TRUE), .))) %>%
+  ungroup()
+
+# Step 3: Fill any remaining numeric NAs with overall median
+combined <- combined %>%
+  mutate(across(where(is.numeric), ~ifelse(is.na(.), median(., na.rm = TRUE), .)))
+
+# Step 4: Winsorize numeric columns to cap outliers
 winsorize <- function(x, probs = c(0.01, 0.99)) {
   q <- quantile(x, probs = probs, na.rm = TRUE)
   pmin(pmax(x, q[1]), q[2])
 }
 
-# Impute numeric NAs by State median and winsorize
 combined <- combined %>%
-  group_by(State) %>%
-  mutate(across(where(is.numeric), ~ifelse(is.na(.), median(., na.rm = TRUE), .))) %>%
-  ungroup() %>%
   mutate(across(where(is.numeric), winsorize))
 
-# Check which columns still have NAs
+# Step 5: Impute missing METRO23 with mode
+mode_impute <- function(x) {
+  ux <- na.omit(x)
+  if (length(ux) == 0) return(x)
+  m <- names(sort(table(ux), decreasing = TRUE))[1]
+  replace(x, is.na(x), m)
+}
+
+combined <- combined %>%
+  mutate(METRO23 = mode_impute(METRO23))
+
 na_counts <- colSums(is.na(combined))
 na_columns <- names(na_counts[na_counts > 0])
 na_columns
 ```
 
-```{r} #####Corect}
+```{r}
 
-winsorize <- function(x, probs = c(0.01, 0.99)) {
-  q <- quantile(x, probs, na.rm = TRUE)
-  pmin(pmax(x, q[1]), q[2])
-}
+check <- combined %>%
+  select(where(~ any(is.na(.))))
 
-# Function to get mode (most frequent value)
-get_mode <- function(x) {
-  ux <- na.omit(unique(x))
-  if(length(ux) == 0) return(NA)
-  ux[which.max(tabulate(match(x, ux)))]
-}
-
-# Impute numeric NAs by State median, fill factor NAs, then winsorize
-combined <- combined %>%
-  group_by(State) %>%
-  mutate(
-    # Numeric columns
-    across(where(is.numeric), ~ifelse(is.na(.), median(., na.rm = TRUE), .)),
-    # Factor column METRO23
-    METRO23 = as.factor(ifelse(is.na(METRO23), get_mode(METRO23), METRO23))
-  ) %>%
-  ungroup() %>%
-  # Winsorize numeric columns
-  mutate(across(where(is.numeric), winsorize))
-
-na_counts <- colSums(is.na(combined))
-na_columns <- names(na_counts[na_counts > 0])
-na_columns
+summary(check)
 ```
 
 ```{r}
