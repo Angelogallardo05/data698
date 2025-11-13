@@ -42,7 +42,7 @@ There has not been much research on how to solve food insecurity through food wa
 
 Leveraging Machine Learning for Food Waste Reduction: An Analysis of Predictive Models [@yang2024foodwaste] predicts food waste using data on household consumption patterns, retail demand, and food service estimates; along with confidence in estimates to gauge reliability for each country. It focuses on machine learning algorithms like Random Forest to predict food waste patterns for informed strategies. The report concluded that household-level food waste estimates are the most influential factors driving food waste predictions at the per-capita level. However, household data may be hard to collect due to the reliability of the self-reported data. In addition, collecting reliable household data remains challenging due to the limitations of self-reported information and the lack of incentives for households to participate in surveys. As a result, using household food excess as a solution may be less practical or effective to redistribute excess food.
 
-Another study \[@irani2018managing\] examines how food waste and loss in supply chains impact food security, using causal modeling and simulation to identify key drivers. The findings show that food waste is not solely the result of kitchen inefficiencies or over-ordering, but arises from a combination of factors, including consumer behavior, storage logistics, and supplier practices. The research employs a Fuzzy Cognitive Map (FCM) to model the interrelated factors driving food waste and loss. However, the study concludes that no single factor—such as inventory management—can reduce food waste effectively without complementary actions, such as menu planning and staff training. The study’s reliance on qualitative data and prototype simulations limits its generalizability, and restaurants may need context-specific data to accurately quantify the impact of interventions. It is estimated that 17% of food is wasted at the retail level, where redistribution can have a bigger impact than at the production or consumption stages of the supply chain. Although food waste at the retail level has been studied less than at other supply chain stages, retail stores tend to generate more food waste than food loss, as the discarded food is generally still consumable.
+Another study [@irani2018managing] examines how food waste and loss in supply chains impact food security, using causal modeling and simulation to identify key drivers. The findings show that food waste is not solely the result of kitchen inefficiencies or over-ordering, but arises from a combination of factors, including consumer behavior, storage logistics, and supplier practices. The research employs a Fuzzy Cognitive Map (FCM) to model the interrelated factors driving food waste and loss. However, the study concludes that no single factor—such as inventory management—can reduce food waste effectively without complementary actions, such as menu planning and staff training. The study’s reliance on qualitative data and prototype simulations limits its generalizability, and restaurants may need context-specific data to accurately quantify the impact of interventions. It is estimated that 17% of food is wasted at the retail level, where redistribution can have a bigger impact than at the production or consumption stages of the supply chain. Although food waste at the retail level has been studied less than at other supply chain stages, retail stores tend to generate more food waste than food loss, as the discarded food is generally still consumable.
 
 ```{r, warning=FALSE, results='hide'}
 library(tidyverse)
@@ -55,6 +55,7 @@ library(ggplot2)
 library(scales)
 library(Metrics) 
 library(caret)
+library(randomForest)
 ```
 
 ## Data
@@ -160,14 +161,6 @@ insecurity_wider <- insecurity_wider %>%
 ```
 
 ```{r}
-# Replace placeholders with NA to summarize/ dont USE!!!
-insecurity_wider <- insecurity_wider %>%
-  mutate(across(where(is.numeric), ~replace(., . %in% c(-8888, -9999), NA)))%>%
-  mutate(across(where(is.numeric), ~round(., 2))) %>%
- mutate(METRO23 = replace(METRO23, METRO23 %in% c(-8888, -9999), NA))
-```
-
-```{r}
 numeric_vars <- names(insecurity_wider)[sapply(insecurity_wider, is.numeric)]
 
 summary_table <- insecurity_wider %>%
@@ -204,33 +197,9 @@ plots <- lapply(numeric_vars, function(col_name){
       theme_minimal()
 })
 
-plots
-```
+combined_plot <- wrap_plots(plots, ncol = 4)
 
-```{r}
-#numeric_cols <- sapply(insecurity_wider, is.numeric)
-
-# Loop through each numeric column and plot histogram
-#for(col_name in names(insecurity_wider)[numeric_cols]) {
-#  hist(
-    
-#    insecurity_wider[[col_name]],
-#    main = paste("Histogram of", col_name),
-#    xlab = col_name,
-#    col = "skyblue",
-#    breaks = 20,
-#    na.rm = TRUE  # ignore NA values
-#  )
-#}
-
-```
-
-```{r}
-shapiro.test(combined$PCT_WICWOMEN21)
-
-# Q-Q plot
-qqnorm(combined$PCT_WICWOMEN21)
-qqline(combined$PCT_WICWOMEN21, col = "red")
+combined_plot
 ```
 
 ```{r}
@@ -258,6 +227,7 @@ combined<- insecurity_wider %>%
 
 
 
+
 ```
 
 ```{r}
@@ -268,7 +238,7 @@ combined<- insecurity_wider %>%
 Mismatch between food insecurity and food loss
 
 ```{r}
-# 1️⃣ Aggregate food insecurity by state
+# food insecurity by state
 food_insec_state <- combined %>%
   group_by(State) %>%
   summarize(Food_Insecurity = mean(FOODINSEC_21_23, na.rm = TRUE)) %>%
@@ -276,7 +246,7 @@ food_insec_state <- combined %>%
   rename(state = State) %>%
   mutate(state = toupper(state))
 
-# 2️⃣ Aggregate average excess food by state
+#average restaurant excess food
 excess_food_state <- combined %>%
   group_by(State) %>%
   summarize(Avg_Excess_Food = mean(Avg_Excess_Food, na.rm = TRUE)) %>%
@@ -284,10 +254,9 @@ excess_food_state <- combined %>%
   rename(state = State) %>%
   mutate(state = toupper(state))
 
-# 3️⃣ Join the two metrics
 state_food <- left_join(food_insec_state, excess_food_state, by = "state")
 
-# 4️⃣ Plot Food Insecurity map
+# food insecurity by state
 plot_usmap(data = state_food, values = "Food_Insecurity", regions = "states") +
   scale_fill_continuous(
     name = "Food Insecurity (21-23)",
@@ -297,7 +266,7 @@ plot_usmap(data = state_food, values = "Food_Insecurity", regions = "states") +
   ) +
   labs(title = "Food Insecurity by State (2021-2023)")
 
-# 5️⃣ Plot Avg Excess Food map
+# Averege restaurant excess food by state
 plot_usmap(data = state_food, values = "Avg_Excess_Food", regions = "states") +
   scale_fill_continuous(
     name = "Avg Excess Food",
@@ -309,6 +278,8 @@ plot_usmap(data = state_food, values = "Avg_Excess_Food", regions = "states") +
 ```
 
 ```{r}
+
+# US food insecurity and Restaurant excess food hotspots
 state_food <- state_food %>%
   mutate(
     Excess_Food_Avg = mean(Avg_Excess_Food, na.rm = TRUE),
@@ -320,7 +291,6 @@ state_food <- state_food %>%
     )
   )
 
-# 2️⃣ Plot combined map
 plot_usmap(data = state_food, values = "Hotspot", regions = "states") +
   scale_fill_manual(
     values = c(
@@ -343,13 +313,13 @@ numeric_vars <- combined %>%
     Avg_Excess_Food = combined$Avg_Excess_Food
   )
 
-# Step 2: Remove constant columns (SD = 0)
+
 numeric_vars <- numeric_vars %>% select(where(~sd(., na.rm = TRUE) != 0))
 
-# ----- Correlation with FOODINSEC_21_23 -----
+-
 cor_foodinsec <- cor(numeric_vars, use = "pairwise.complete.obs")["FOODINSEC_21_23", ]
 
-# Top 5 positive correlations
+
 top5_foodinsec <- sort(cor_foodinsec, decreasing = TRUE)[2:20] # skip self-correlation
 # Top 5 negative correlations
 bottom5_foodinsec <- sort(cor_foodinsec, decreasing = FALSE)[1:10]
@@ -359,12 +329,12 @@ foodinsec_table <- data.frame(
   Correlation = c(top5_foodinsec, bottom5_foodinsec)
 )
 
-# ----- Correlation with Avg_Excess_Food -----
+
 cor_excess <- cor(numeric_vars, use = "pairwise.complete.obs")["Avg_Excess_Food", ]
 
-# Top 5 positive correlations
+
 top5_excess <- sort(cor_excess, decreasing = TRUE)[2:6]
-# Top 5 negative correlations
+
 bottom5_excess <- sort(cor_excess, decreasing = FALSE)[1:10]
 
 excess_table <- data.frame(
@@ -390,7 +360,7 @@ combined <- combined %>%
   mutate(across(where(is.numeric), ~ifelse(is.na(.), median(., na.rm = TRUE), .))) %>%
   ungroup()
 
-# Step 3: Fill any remaining numeric NAs with overall median
+
 combined <- combined %>%
   mutate(across(where(is.numeric), ~ifelse(is.na(.), median(., na.rm = TRUE), .)))
 
@@ -403,7 +373,6 @@ winsorize <- function(x, probs = c(0.01, 0.99)) {
 combined <- combined %>%
   mutate(across(where(is.numeric), winsorize))
 
-# Step 5: Impute missing METRO23 with mode
 mode_impute <- function(x) {
   ux <- na.omit(x)
   if (length(ux) == 0) return(x)
@@ -432,7 +401,7 @@ summary(check)
 ```
 
 ```{r}
-
+## rename columns for clarity
 combined <- combined %>%
   rename(
     Foodinsecurity = FOODINSEC_21_23,
@@ -475,22 +444,14 @@ selected_vars <- c(
   "SNAPstoreschang",
   "SummerFoodProgChange",
   "MetroStatus",
-  "aduldiabetesrate",
+  "adultdiabetesrate",
   "WomenWICpart",
   "Excessfoodrestaurant"
 )
 
 model_data <- combined %>%
   select(selected_vars)
-# Create histograms for just these variables
-#plots_selected <- lapply(selected_vars, function(col_name) {
-#  ggplot(combined, aes_string(x = col_name)) +
-#    geom_histogram(fill = "red", bins = 20, na.rm = TRUE) +
-#    labs(title = col_name, x = col_name, y = "count") +
-#    theme_minimal()
-#})
 
-#plots_selected
 ```
 
 ```{r}
@@ -498,7 +459,6 @@ data_select <- model_data %>%
   select(all_of(selected_vars)) %>%
   select(where(is.numeric))
 
-# Compute correlation matrix
 data_corr <- cor(data_select, use = "complete.obs")
 
 
@@ -521,6 +481,8 @@ data_plot
 
 ## Methodology
 
+The independent variables used for the model include the county's demographics, even though some of the race data set are not normally distributed, the makeup of county's can inform us if system barriers is prevalent around the US. The next set of variables modeled to predict food insecurity are the participant changes in government assistance programs over the last few years. Another key demographic input is the count's median income, as well as the obesity rate.
+
 ## linear model
 
 ```{r}
@@ -530,13 +492,6 @@ set.seed(1234)
 
 sample<- sample(nrow(model_data), nrow(model_data) *.60,
                 replace = FALSE)
-
-#train_idx <- createDataPartition(combined$FOODINSEC_21_23, p = 0.6, list = FALSE)
-#train_data <- combined[train_idx, ]
-#test_data  <- combined[-train_idx, ]
-
-#colSums(is.na(train_data))
-
 
 ```
 
@@ -569,54 +524,100 @@ rmse_test
 
 ```{r}
 # model 2
-lm_model_2 <- lm(formula_new, data = train_data)
-summary(lm_model_2)
+set.seed(12345)
+lm_model2 <-lm(Foodinsecurity ~ WhitePct + BlackPct + NativePct + 
+               PacificIslanderPct + Medianincome + NocarlowaccessChange + 
+               ObesityPct + WICChange + SNAPparticipantschange + 
+               SNAPstoreschang + SummerFoodProgChange + MetroStatus + 
+               WomenWICpart,
+             data = foodinsec_train)
+summary(lm_model2)
+```
+
+```{r}
+AIC(model1, lm_model2)
+BIC(model1, lm_model2)
 ```
 
 ## random forest
 
 ```{r}
-library(randomForest)
-set.seed(123)
-```
-
-```{r}
-# Predictors (simplified)
-predictors <- score_vars_new  # 15 predictors from simplified linear model
-
-# Target
-target <- "FOODINSEC_21_23"
-
+set.seed(111)
 rf_model <- randomForest(
-  formula = as.formula(paste(target, "~", paste(predictors, collapse = " + "))),
-  data = train_data,
-  ntree = 500,       # number of trees
-  importance = TRUE  # to see variable importance
+  Foodinsecurity ~ WhitePct + BlackPct + NativePct + 
+    PacificIslanderPct + Medianincome + NocarlowaccessChange + 
+    ObesityPct + WICChange + SNAPparticipantschange + 
+    SNAPstoreschang + SummerFoodProgChange + MetroStatus + 
+    WomenWICpart,
+  data = foodinsec_train,
+  ntree = 500,
+  importance = TRUE
 )
 
-rf_model
+print(rf_model)
+importance(rf_model)
+varImpPlot(rf_model)
 ```
 
 ```{r}
-library(caret)
-library(randomForest)
-
-# Set up training control: 5-fold CV (you can change to 10)
-train_control <- trainControl(method = "cv", number = 5)
-
-# Train the model using caret with cross-validation
-set.seed(123)
-rf_model <- train(
-  Priority_Score ~ .,   # formula with all predictors
-  data = train_data,    # your training data
-  method = "rf",        # random forest
-  trControl = train_control,
-  importance = TRUE,
-  ntree = 500
+set.seed(1235)
+control <- trainControl(method = "cv", number = 5)
+rf_cv <- train(
+  Foodinsecurity ~ WhitePct + BlackPct + NativePct + PacificIslanderPct +
+    Medianincome + NocarlowaccessChange + ObesityPct + WICChange +
+    SNAPparticipantschange + SNAPstoreschang + SummerFoodProgChange +
+    MetroStatus + WomenWICpart,
+  data = model_data,
+  method = "rf",
+  trControl = control,
+  tuneLength = 3
 )
-
-# Cross-validated results
-print(rf_model)
+print(rf_cv)
 ```
 
 # Conclusion
+
+The first model developed to predict food insecurity by county is a multiple linear regression which included key demographic variables, as well as economic, access to stores, and participation in food programs. This model scored an adjusted R\^2 of 71%. Most variables were statistically significant, except for the Asian population in the county and the adult obesity rate. As expected, median income, various types of food programs participation changes, and overall obesity rates were statistically significant. This indicates that some of the variables such as adult obesity rate was redundant and some multicollinearity.
+
+The second model removed the weaker predictors, due to the insignificance to the model. However, the adjusted R\^2 remained about the same at \~71%. This concluded that the excluded variables were in fact not valuable to the model.
+
+Lastly, the random forest model used the same predictors as the previous model to capture any nonlinear relationships among the variables. This modeled outperformed with an R\^2 of 99.97%, an almost perfect accuracy rate. WIC participationfrom women was the most influential variable, which is as expected because this variable had a high correlation with food insecurity.
+
+```{r}
+model_summary <- data.frame(
+  Model = c("Linear Regression (Full)", 
+            "Linear Regression (Reduced)", 
+            "Random Forest"),
+  RMSE = c(1.322, 1.322, 0.0385),
+  R2 = c(0.7121, 0.7111, 0.99976),
+  MAE = c(NA, NA, 0.0105)  
+)
+
+model_summary
+
+```
+
+```{r}
+model_long <- model_summary %>%
+  pivot_longer(cols = c(RMSE, R2), names_to = "Metric", values_to = "Value")
+
+# Plot
+ggplot(model_long, aes(x = Model, y = Value, fill = Metric)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(values = c("R2" = "#1b9e77", "RMSE" = "#d95f02")) +
+  labs(title = "Model Performance Comparison",
+       subtitle = "Comparing Linear Regression (Full & Reduced) vs Random Forest",
+       x = "Model",
+       y = "Metric Value") +
+  theme_minimal(base_size = 13) +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1))
+```
+
+```{r}
+ggplot(model_long, aes(x = reorder(Model, -Value), y = Value, fill = Metric)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~Metric, scales = "free_y") +
+  labs(title = "Model Comparison: Accuracy and Error",
+       x = "Model", y = "Value") +
+  theme_minimal(base_size = 13)
+```
