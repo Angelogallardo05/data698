@@ -8,41 +8,41 @@ format: pdf
 
 # Abstract
 
-Food insecurity is a global issue, in the United States. 13.5% of households or 18 million households were food insecure in 2023. With high estimates of food waste, this research looks to find intervention through collaboration with restaurants and government programs. The goal is to build a model that accurately predicts high food insecurity at the county level. Furthermore, we look to demonstrate the potential impact that local restaurants and government programs can make with early intervention. Solving food insecurity in the United States can also improve food waste from restaurants in the community. Policy making can improve at the county level to help mitigate food insecurity and food loss with food assistance programs. Food programs participation changes provides important data on how Americans are securing their food. Thus this model relies heavily on various government assistance programs to understand food insecurity.
+Food insecurity is a global issue, in the United States alone, 13.5% of households or 18 million households were food insecure in 2023. With high estimates of food waste, this research looks to find intervention through collaboration with restaurants and government programs. The goal is to build a model that accurately predicts high food insecurity at the county level. Furthermore, we look to demonstrate the potential impact that local restaurants and government programs can create with efficient intervention. This way solving food insecurity in the United States can also improve food waste from restaurants in the community. Policy making can improve at the county level to help mitigate food insecurity and food loss with food assistance programs. By adding food assistance program participation data into the model we can understand how Americans are securing their food. Thus this research looks to detect whether calorie intake can predict high food insecurity. Finally, an intervention involving the recovery of a percentage of restaurant food loss through SNAP policy is simulated to estimate change in food insecurity.
 
 # Introduction
 
-In 2023, the USDA, FDA, and EPA [@fda2023nationalstrategy]announced a national goal to reduce food loss and waste in the U.S by 50% by 2030. Food insecurity [@feedingamerica_foodinsecurity] is described as people not having access to food needed to live their fullest lives. Food waste [@ReFED2025] is defined as the edible amount of food, post harvest, that is available for human consumption but is not yet consumed for any reason. According to USDA, "over one-third of all available food goes uneaten through loss or waste.
+In 2023, the USDA, FDA, and EPA [@fda2023nationalstrategy]announced a national goal to reduce food loss and waste in the U.S by 50% by 2030. Food insecurity [@feedingamerica_foodinsecurity] is described as people not having access to food needed to live their fullest lives. On the other side, Food waste [@ReFED2025] is defined as the edible amount of food, post harvest, that is available for human consumption but is not yet consumed for any reason. Additionally, over one-third of all available food goes uneaten through loss or waste.
 
 According to Feeding America [@feedingamerica_foodinsecurity], the causes of food insecurity include income-related factors (low-wage jobs, unreliable work, or financial emergencies); high cost of living (essentials are increasingly difficult to afford); community factors (limited access to transportation); health-related issues (reduced budgets for food and other essentials); and systematic barriers (unfair systems in policies and institutions).
 
 By using readily available secondary data such as income levels, community factors, health issues, and combining it with government assistance program participation we can:
 
-Create a priority score model that isolate counties that are most need of intervention
-
-Develop a model that can predict high food insecurity using key demographics as well as government program participation rates.
-
-Determine what the main causes of food insecurity in the United states
-
-Find counties with high levels of food insecurity and restaurant food loss for immediate intervention
+Create a model that isolate counties that are most need of intervention, develop a model that can predict high food insecurity using key demographics as well as government program participation rates. Through this model, we will understand the main indicators of food insecurity in the United states. Finally, a potential intervention policy is simulated to analyze the effects it may have on food insecurity.
 
 # Research Question
 
-The focus of this research is at the county level, where a model can reveal high priority counties for food security intervention. Furthermore, the findings could create a collaborative effort between local food retailers and non-profits through incentive-based programs aimed to effectively and efficiently reduce food insecurity. By developing a model to accurately predict high priority counties, food pantries and government programs can rapidly focus on collaborating with local retailers to mitigate hunger. In addition, local retailers will also benefit by reduction of food loss while possible increasing revenue. In essence, this model could be utilize for non-profits to collaborate with local retailers, or the government can use this for policy making to increase food program authorized stores where needed. Currently, each state sets their own requirements for choosing how many and which restaurants they allow to participate in the SNAP program.
+The focus of this research is at the county level, where a model can reveal high priority counties for food security intervention. Furthermore, the findings could create a collaborative effort between local food retailers and non-profits through incentive-based programs aimed to effectively and efficiently reduce food insecurity. By developing a model to accurately predict high priority counties, food pantries and government programs can rapidly focus on collaborating with local retailers to mitigate hunger. In addition, local retailers may also benefit by reduction of food loss while possible increasing revenue. In essence, this model could be utilize for non-profits to collaborate with local retailers, or the government can use this for policy making to increase food program authorized stores where needed. Currently, each state sets their own requirements for choosing how many and which restaurants they allow to participate in the SNAP program.
 
 The significance of this phenomenon is twofold. First, more than 95 percent of food waste in the United States ends up in landfills, where it breaks down anaerobically and releases methane, carbon dioxide, and other greenhouse gases into the atmosphere [@mu2017environmental]. If food waste is not addressed, it will continue to contribute significantly to climate change. Second, the USDA reported that in 2023, 13.5 percent of U.S. households experienced food insecurity at some point during the year. Food insecurity is a global crisis, and countries around the world are actively seeking solutions to eliminate it.
 
 Addressing food waste and insecurity has numerous real-world applications. For businesses, especially in agriculture, food production, and retail-reducing food waste can lead to cost savings, more efficient supply chains, and improved sustainability practices. Food that would otherwise go to waste can be redistributed to food banks and local communities, helping to reduce hunger in America and improve public health outcomes. Local non-profits and governments can use this model to develop targeted programs and initiatives that connect surplus food with those in need. Taxpayers also benefit when less food waste means better use of public resources and reduced environmental damage. Furthermore, reducing food waste directly contributes to the fight against climate change by lowering greenhouse gas emissions and easing the strain on natural resources. In the long term, tackling this issue supports environmental sustainability, economic efficiency, and social equity.
 
-**Research question:** Can a predictive priority-score/model model identify US counties where redistributing restaurant excess food will most effectively reduce county-level food insecurity?
+**Research question:** Can a machine learning model accurately identify food insecurity by US counties? Which indicators are significant in predicting food insecurity? Finally, can a food intervention policy to recover restaurant food loss reduce high food insecurity counties?
+
+I hypothesize that food recovery from restaurants may help reduce food insecurity in mainly rural areas and where there is low access to transportation or stores.
 
 # Literature Review
 
-There has not been much research on how to solve food insecurity through food waste estimates. For instance, one research paper [@lentz2019data] pointed out that the Integrated Food Security Phase Classification (IPC), a global framework that classifies food insecurity, does not make use of the readily available secondary data, in a replicable and transparent manner. Furthermore, there is no current food security early warning and monitoring system that incorporates readily available data into a predictive model. As a result, these methods limit timely, targeted humanitarian response. The research builds linear and log-linear models using three readily available secondary data measures, weather and price fluctuations, geographic variations, and intra-annual seasonal trends to predict food security at the sub national level. Their findings show that their model correctly predicts 83% to 99% of the most food insecure clusters, while the IPC’s approach only predicts between 0% and 10%. Although the model is an improvement from the IPC's approach, the model does not incorporate solutions to reduce food insecurity. Meanwhile, the U.S, unlike other countries, has scorches of useful readily available secondary data to predict priority counties. In addition, by accurately predicting priority zones, the US government can assess whether counties are steering towards high food insecurity to perform early intervention.
+Measuring Food insecurity and Hunger in the United States [@carlson1999measuring] developed measuring scale to quantify food insecurity in the US. The measurement scale included household surveys where the questions were categorically measured to reflect the severity of the responses. This benchmark classifies food security to be defined as assured access at all times to enough food for an active healthy life. The other form of food insecurity, malnutrition, is not the case in the US, as there are no clinical symptoms of deprivation. As such, questions from skipping meals or children being hungry estimated a higher severity of food insecurity. The results show that severe hunger was more prevalent in households with children under eighteen years old. Additionally, the scale identified that food insecurity was more common among minority households and low income to poverty household ratios. This scale serves as a baseline to understand the relationship between food insecurity and key demographics. However, a predictive model can utilize these predictors, as well as economic access, and calorie intake data to estimate the probability that a household becomes food insecured.
 
-Leveraging Machine Learning for Food Waste Reduction: An Analysis of Predictive Models [@yang2024foodwaste] predicts food waste using data on household consumption patterns, retail demand, and food service estimates; along with confidence in estimates to gauge reliability for each country. It focuses on machine learning algorithms like Random Forest to predict food waste patterns for informed strategies. The report concluded that household-level food waste estimates are the most influential factors driving food waste predictions at the per-capita level. However, household data may be hard to collect due to the reliability of the self-reported data. In addition, collecting reliable household data remains challenging due to the limitations of self-reported information and the lack of incentives for households to participate in surveys. As a result, using household food excess as a solution may be less practical or effective to redistribute excess food.
+One research paper [@lentz2019data] pointed out that the Integrated Food Security Phase Classification (IPC), a global framework that classifies food insecurity, does not make use of the readily available secondary data, in a replicable and transparent manner. Furthermore, there is no current food security early warning and monitoring system that incorporates readily available data into a predictive model. As a result, these methods limit timely, targeted humanitarian response. The research builds linear and log-linear models using three readily available secondary data measures, weather and price fluctuations, geographic variations, demographics, and intra-annual seasonal trends to predict food security at the sub national level. Their findings show that their model correctly predicts 83% to 99% of the most food insecure clusters, while the IPC’s approach only predicts between 0% and 10%. Although the model is an improvement from the IPC's approach, the model does not incorporate solutions to reduce food insecurity. Meanwhile, the U.S, unlike other countries, weather changes or geographic variations may not be useful as food insecurity is mainly driven by food program access, unemployment, and household characteristics. In addition, by accurately predicting high food insecurity, the US government can assess whether counties are steering towards high food insecurity to perform early intervention.
 
-Another study [@irani2018managing] examines how food waste and loss in supply chains impact food security, using causal modeling and simulation to identify key drivers. The findings show that food waste is not solely the result of kitchen inefficiencies or over-ordering, but arises from a combination of factors, including consumer behavior, storage logistics, and supplier practices. The research employs a Fuzzy Cognitive Map (FCM) to model the interrelated factors driving food waste and loss. However, the study concludes that no single factor—such as inventory management—can reduce food waste effectively without complementary actions, such as menu planning and staff training. The study’s reliance on qualitative data and prototype simulations limits its generalizability, and restaurants may need context-specific data to accurately quantify the impact of interventions. It is estimated that 17% of food is wasted at the retail level, where redistribution can have a bigger impact than at the production or consumption stages of the supply chain. Although food waste at the retail level has been studied less than at other supply chain stages, retail stores tend to generate more food waste than food loss, as the discarded food is generally still consumable.
+Leveraging Machine Learning for Food Waste Reduction: An Analysis of Predictive Models [@yang2024foodwaste] predicted food waste using data on household consumption patterns, retail demand, and food service estimates; along with confidence in estimates to gauge reliability for each country. It focuses on machine learning algorithms like Random Forest to predict food waste patterns for support policymakers in developing policies that facilitate interventions to reduce food loss. The report concluded that household-level food waste estimates are the most influential factors driving food waste predictions at the per-capita level. However, household data may be hard to collect due to the reliability of the self-reported data. In addition, collecting reliable household data remains challenging due to the limitations of self-reported information and the lack of incentives for households to participate in surveys. As a result, using household food excess as a solution may be less practical or effective to redistribute excess food.
+
+Another study [@irani2018managing] examines how food waste and loss in supply chains impact food security, using causal modeling and simulation to identify key drivers from qualitative data. The findings show that food waste is not solely the result of kitchen inefficiencies or over-ordering, but arises from a combination of factors, including consumer behavior, storage logistics, and supplier practices. However, one study was noted as identifying plate waste to compomise the highest amount of food waste, followed by storage, and and preperation loss. The research employs a Fuzzy Cognitive Map (FCM) to model the interrelated factors driving food waste and loss. The study concludes that no single factor—such as inventory management—can reduce food waste effectively without complementary actions, such as menu planning and staff training. The study’s reliance on qualitative data and prototype simulations limits its generalizability, and restaurants may need context-specific data to accurately quantify the impact of interventions. It is estimated that 17% of food is wasted at the retail level, where redistribution can have a bigger impact than at the production or consumption stages of the supply chain. Although food waste at the retail level has been studied less than at other supply chain stages, retail stores tend to generate more food waste than food loss, as the discarded food is generally still consumable.
+
+ 
 
 ```{r, echo=FALSE, message=FALSE, results='hide', warning=FALSE}
 library(tidyverse)
@@ -60,105 +60,41 @@ library(stringr)
 library(jsonlite)
 library(httr)
 library(purrr)
+library(skimr)
+library(GGally)
+library(ggforce)
+library(corrplot)
 ```
 
 ## Data
 
-Food loss and waste data is scarce due to the uneven information across all stages of food chains, and aggregated data that is difficult to replicate. In fact, a UNEP study [@SolohaDace2025] noted that the food waste per capita in the EU cannot be fully explained because the methodology used to quantify food waste in each member state is not known, making it difficult to conclude whether the differences in data are justified or are due to differences in scope. One review paper, [@xue2017missing]. identified that data is heavily biased towards industrialized and high-income countries. The paper also points out that fewer studies focus on retail, households, and distribution levels of the supply chain.
-
 ## Food insecurity
 
-The food environment atlas [@USDA_Food_Environment_Atlas] provides secondary data by state and county. The data set includes the food insecurity, demographics, and food-program participation rates. For our model we will include the makeup of the counties race, the median income, obesity rate, and food programs participation rate changes over a period of years.
+The food environment atlas [@USDA_Food_Environment_Atlas] provides secondary data by state and county. The data set includes the food insecurity by state only, demographics, and food-program participation rates. For our model we will include the makeup of the counties race and age, the median income, obesity rate, and food programs participation rates.
 
-    Foodinsecurity - household food insecurity
-
-    WhitePct - White Race percantage
-
-    BlackPct - Black Race percantage
-
-    AsianPct - Asian Race percentage
-
-    NativePct - Native Race percentage
-
-    PacificIslanderPct - Pacific Race percentage
-
-    HispPct - Hispanic Race percentage
-
-    TwoOrMorePct - Two Race percentage
-
-    Medianincome - Median ncome
-
-    NocarlowaccessChange - No car low acces to stores changes
-
-    ObesityPct   Obesity Rate percentage
-
-    WICChange - WICC participation change
-
-    SNAPparticipantschange - SNAP participation change
-
-    SNAPstoreschang - SNAP store participation change
-
-    SummerFoodProgChange - Summer food  program rate change
-
-    MetroStatus - Metro  avilability
-
-    adultdiabetesrate - Adults diabetes rate
-
-    WomenWICpart - Women WIC participation
-
-    Excessfoodrestaurant - Excess food Restaurant estimates
+The re-evaluation of the Thrifty food Plan [@USDA_ThriftyFoodPlan2021] in 2021 to estimate the cost of a practical, nutritious, and budget-conscious diet. In 2021 the food plan referenced a family of four, where the cost of the market basket was calculated at \$835.57 per month. The referenced family consisted of two adults, male and female, between the ages of 20-50 years old, calculated a daily intake of calories of about 3,000 and 2,200. The other family members included two children, one with the age rage 6-8, and a daily calorie intake of 1,800, and the other in the 9-11 age category with a daily intake of 2,200. This means that on average one dollar of SNAP benefit purchases 330 calories. This information will be utilized to create additional variable- calories per SNAP recipient- where we can visualize whether the adequate allotment is given to participants.
 
 ## Restaurant excess estimates
 
-US EPA [@EPA_ExcessFoodOpportunitiesMap] provides a map of restaurants at the county level with excess food estimates. We will use this data to find restaurant average food loss at the county level; we will then combine this data with the food insecurity data set.
+Food loss and waste data is scarce due to the uneven information across all stages of food chains, and aggregated data that is difficult to replicate. In fact, a UNEP study [@SolohaDace2025] noted that the food waste per capita in the EU cannot be fully explained because the methodology used to quantify food waste in each member state is not known, making it difficult to conclude whether the differences in data are justified or are due to differences in scope. One review paper, [@xue2017missing] identified that data is heavily biased towards industrialized and high-income countries. The paper also points out that fewer studies focus on retail, households, and distribution levels of the supply chain.
 
-Avg_Excess_Food -Average restaurant Excess food in tons
+US EPA [@EPA_ExcessFoodOpportunitiesMap] provides a map of restaurants at the county level with excess food estimates. We will use this data to find the aggregate food loss in tons from restaurants at the county level. This data will be utilized to estimate the amount of available calories that can be recoverable at the local level. Finally, a percentage of the recoverable amount will be estimated and simulated to calculate the impact it has to reduce food insecurity.
 
-# Data Exploration
-
-The average food insecurity rate from 2021 to 2023 is mostly evenly distributed with the mean for counties across the United States at 12.46% and median of 12.30%. The race demographics show, as expected, more counties with high non-Hispanic white populations, while minorities are right skewed. households with no car and low access to scores is roughly normal with some counties experiencing low access to stores without cars. The median household income in the united states is about \$56K; however, some counties have a median income over \$150K.
-
-The map graph identifies at the state levels that high levels of food insecurity is prevalent in the south. For example Texas, Arkansas, and Alabama have high levels of food insecurity. Another graph shows that New Mexico has high food waste estimates from restaurants. Finally, states like Nevada, New mexico, South Carolina, Michigan, and Ohio have high rates of food insecurity as well as food excess from res taunts.
-
-Higher participation of women in WIC programs correlates with higher food insecurity. Notably, the percentage change in WIC participants between 2017 and 2021 has a strong negative correlation with food insecurity (-52%). Since the mean percentage change of WIC participants is -30%, we can conclude that if participation rates increase, food insecurity is likely to decrease. Changes in SNAP participation are also negatively correlated with food insecurity, with decreases in SNAP participation associated with higher food insecurity.
-
-The availability of fast food restaurants has the highest positive correlation (10.7%) with restaurant excess food estimates. In addition, WIC redemptions are also positively correlated with excess food estimates from restaurants. Finally, grocery store availability shows a weak negative correlation (–14%) with restaurant excess food estimates, indicating that areas with more grocery stores tend to have less excess food from restaurants.
-
-```{r, echo=FALSE, message=FALSE, results='hide', warning=FALSE}
+```{r}
 insecurity <- read.csv("https://raw.githubusercontent.com/Angelogallardo05/data698/refs/heads/main/StateAndCountyData.csv")
+
+fi <- read.csv("https://raw.githubusercontent.com/Angelogallardo05/data698/refs/heads/main/2023%20County%20Health%20Rankings%20Data%20-%20v2.csv")
 
 Restaurant <- read.csv("https://raw.githubusercontent.com/Angelogallardo05/data698/refs/heads/main/RestaurantsAndFoodServices.csv")
 
-pop <- read.csv("https://raw.githubusercontent.com/Angelogallardo05/data698/refs/heads/main/co-est2022-alldata.csv")
-
-fi <- read.csv("https://raw.githubusercontent.com/Angelogallardo05/data698/refs/heads/main/2025%20County%20Health%20Rankings%20Data%20-%20v4%20(1).csv")
 ```
 
 ```{r}
-# population 
-
-state_lookup <- data.frame(
-  StateFull = state.name,
-  StateAbbrev = state.abb
-)
-
-pop <- pop %>%
-  mutate( CTY = COUNTY ,  County = CTYNAME,  ST = STATE,  State = STNAME,  POP22 = POPESTIMATE2022, County = str_remove(County," County$"), County = str_trim(County), State = str_trim(State)
-)%>%
-    left_join(state_lookup, by = c("State" = "StateFull")) %>%
-  mutate(State = StateAbbrev) %>%
-  select(State,County, POP22)
-
-glimpse(pop)
+glimpse(fi)
 ```
 
 ```{r}
-pop <- pop %>%
-  group_by(State, County) %>%
-  filter(n() == 1) %>%  # keep only unique State+County combinations
-  ungroup()
-
-glimpse(pop)
+glimpse(insecurity_wider)
 ```
 
 ```{r, echo=FALSE, message=FALSE, results='hide', warning=FALSE}
@@ -166,12 +102,6 @@ insecurity_wider <- insecurity %>%
   pivot_wider(.,names_from = Variable_Code, values_from = Value)
 
 #glimpse(insecurity_wider)
-```
-
-```{r}
-
-insecurity_wider <-  insecurity_wider %>%
-  mutate(PERPOV17_21 = as.factor(PERPOV17_21),METRO23= as.factor(METRO23), POPLOSS15 =as.factor(POPLOSS15) ) 
 ```
 
 ```{r, echo=FALSE, message=FALSE, results='hide', warning=FALSE}
@@ -187,110 +117,48 @@ insecurity_wider <- insecurity_wider %>%
 ```
 
 ```{r}
-# combine population to insecurity data
+state_lookup <- data.frame(
+  State = state.name,
+  StateAbbrev = state.abb,
+  stringsAsFactors = FALSE
+)
 
-insecurity_wider <- insecurity_wider %>%
-  left_join(pop, by = c("State", "County"))
+fi <- fi %>%
+  left_join(state_lookup, by = c("State" = "State")) %>%
+  mutate(State = StateAbbrev) %>%       # replace with abbreviations
+  select(-StateAbbrev)
 
-#glimpse(insecurity_wider)
-```
-
-```{r}
-# calculate total cnap $'s per county, SNAP population, and SNAP$ per participant
-insecurity_wider <- insecurity_wider %>% 
-  mutate( total_SNAP = PC_SNAPBEN22*POP22,
-          SNAP_participants = POP22* (PCT_SNAP22/100),
-          SNAP_per_participant= (total_SNAP/SNAP_participants)
-          )
-#glimpse(insecurity_wider)
-```
-
-```{r}
-# 2021 market basked adult = 2300 kcal/day *2 + 1600 kcal/day + 1800 kcal day  = # 8000 per month / 835.57 = 316 per dollar
-# add calories per month
-
-insecurity_wider <- insecurity_wider%>%
-  mutate(calories_per_person = SNAP_per_participant * 316)
- 
-```
-
-```{r}
 fi <- fi %>% 
-  select(State, County, Food_insecure)
+  select(State, County, Food_insecure = X..Food.Insecure.1  ,Population, Household_burden = X..Households.with.Severe.Cost.Burden.1, Rural_percent =X..Rural  )
 insecurity_wider <- insecurity_wider %>%
   left_join(fi, by = c("State", "County"))
 
 glimpse(insecurity_wider)
 ```
 
+additional SNAP variables
+
 ```{r}
-# use relevane variables
-insecurity_wider <- insecurity_wider %>%
-  select( State, County,FOODINSEC_21_23,PCT_NHWHITE20, PCT_NHBLACK20, PCT_NHASIAN20,PCH_WICWOMEN_16_21, PCT_NHNA20, PCT_HISP20, PCT_NHTMR20, MEDHHINC21, PCH_SNAP_17_22, PCH_LACCESS_LOWI_15_19, PCH_LACCESS_HHNV_15_19, PCT_OBESE_ADULTS22, PCH_SFSP_17_21, PCH_WIC_17_21, REDEMP_SNAPS23,PC_SNAPBEN22,REDEMP_WICS22,SNAPSPTH23, PCH_SNAPSPTH_17_23, PCT_LACCESS_SNAP19, POVRATE21, METRO23,total_SNAP, SNAP_participants , SNAP_per_participant, calories_per_person)
+insecurity_wider <- insecurity_wider %>% 
+  mutate( total_SNAP = PC_SNAPBEN22*Population,
+          SNAP_participants = Population* (PCT_SNAP22/100),
+          SNAP_per_participant= (total_SNAP/SNAP_participants)
+          )
+#glimpse(insecurity_wider)   
+```
 
-glimpse(insecurity_wider)
+add calories per month
 
+```{r}
 
+# add calories per month
+
+insecurity_wider <- insecurity_wider%>%
+  mutate(calories_SNAP_part = SNAP_per_participant * 330)
 ```
 
 ```{r}
-numeric_vars <- names(insecurity_wider)[sapply(insecurity_wider, is.numeric)]
 
-summary_table <- insecurity_wider %>%
-  summarise(across(all_of(numeric_vars),
-                   list(
-                     mean = ~mean(., na.rm = TRUE),
-                     median = ~median(., na.rm = TRUE),
-                     sd = ~sd(., na.rm = TRUE),
-                     min = ~min(., na.rm = TRUE),
-                     max = ~max(., na.rm = TRUE),
-                     n_missing = ~sum(is.na(.))
-                   ),
-                   .names = "{.col}_{.fn}")) %>%
-  pivot_longer(
-    cols = everything(),
-    names_to = c("variable", "stat"),
-    names_pattern = "^(.*)_(mean|median|sd|min|max|n_missing)$",
-    values_to = "value"
-  ) %>%
-  pivot_wider(names_from = stat, values_from = value) %>%
-  arrange(variable)
-summary_table <- summary_table %>%
-  mutate(across(where(is.numeric), ~round(., 2)))
-
-tail(summary_table)
-
-print(numeric_vars)
-```
-
-```{r, echo=FALSE, message=FALSE, results='hide', warning=FALSE}
-
-plots <- lapply(numeric_vars, function(col_name){
-  ggplot(insecurity_wider, aes_string(x = col_name))+
-    geom_histogram(fill = "red", bins = 20, na.rm = TRUE)+
-    labs(title = col_name, x = col_name, y = "count")+
-      theme_minimal()
-})
-
-
-
-plots
-
-```
-
-```{r}
-scatter_plots <- lapply(numeric_vars, function(col_name){
-  ggplot(insecurity_wider, aes_string(x = col_name, y = "FOODINSEC_21_23")) +
-    geom_point(alpha = 0.6, color = "blue")+
-    labs(title = paste("FOODINSEC_21_23 vs", col_name),
-         x = col_name,
-         y = "FOODINSEC_21_23") +
-    theme_minimal()
-})
-
-
-
-scatter_plots
 ```
 
 ```{r, echo=FALSE, message=FALSE, results='hide', warning=FALSE}
@@ -301,7 +169,7 @@ Restaurant <- Restaurant %>%
   group_by(State, County) %>% 
   summarise(
     Total_Excess_Food = sum(Excess_food, na.rm = TRUE),
-    n_restaurants = n()  # optional, tells you how many restaurants per county
+    n_restaurants = n()  
 
   ) %>%
   mutate(across(where(is.numeric), ~round(., 2)))
@@ -314,118 +182,134 @@ glimpse(Restaurant)
 combined<- insecurity_wider %>%
   left_join(Restaurant, by = c("State", "County"))
 
+
+
+
+#Estimated calories wasted per capita
+combined <- combined %>%
+  mutate(kcal_wasted_per_capita = (Total_Excess_Food*2000*1400)/Population,
+         restaurants_per_capita = n_restaurants/Population)
+
 glimpse(combined)
 
-
-
-
 ```
-
-Mismatch between food insecurity and food loss
 
 ```{r}
-# food insecurity by state
-food_insec_state <- combined %>%
-  group_by(State) %>%
-  summarize(Food_Insecurity = mean(FOODINSEC_21_23, na.rm = TRUE)) %>%
-  ungroup() %>%
-  rename(state = State) %>%
-  mutate(state = toupper(state))
+# use relevane variables
+combined <- combined %>%
+  select( State, County,Food_insecure ,PCT_NHWHITE20, PCT_NHBLACK20, PCH_WICWOMEN_16_21, PCT_HISP20, PCT_NHTMR20, MEDHHINC21, PCH_SNAP_17_22, PCH_LACCESS_LOWI_15_19, PCH_LACCESS_HHNV_15_19, PCT_OBESE_ADULTS22, PCH_SFSP_17_21, PCH_WIC_17_21, REDEMP_SNAPS23,PC_SNAPBEN22,REDEMP_WICS22,SNAPSPTH23, PCT_LACCESS_HHNV19, PCH_SNAPSPTH_17_23, PCT_LACCESS_SNAP19, POVRATE21, METRO23,total_SNAP, SNAP_participants , SNAP_per_participant, calories_SNAP_part ,PCT_65OLDER20, PCT_18YOUNGER20,Population, Household_burden, Rural_percent,Total_Excess_Food , n_restaurants, kcal_wasted_per_capita, restaurants_per_capita
+ )
 
-#average restaurant excess food
-excess_food_state <- combined %>%
-  group_by(State) %>%
-  summarize(Avg_Excess_Food = mean(Avg_Excess_Food, na.rm = TRUE)) %>%
-  ungroup() %>%
-  rename(state = State) %>%
-  mutate(state = toupper(state))
-
-state_food <- left_join(food_insec_state, excess_food_state, by = "state")
-
-# food insecurity by state
-plot_usmap(data = state_food, values = "Food_Insecurity", regions = "states") +
-  scale_fill_continuous(
-    name = "Food Insecurity (21-23)",
-    low = "lightblue",
-    high = "darkblue",
-    na.value = ""
-  ) +
-  labs(title = "Food Insecurity by State (2021-2023)")
-
-# Averege restaurant excess food by state
-plot_usmap(data = state_food, values = "Avg_Excess_Food", regions = "states") +
-  scale_fill_continuous(
-    name = "Avg Excess Food",
-    low = "lightblue",
-    high = "darkblue",
-    na.value = "black"
-  ) +
-  labs(title = "Average Excess Food by State")
+glimpse(combined)
 ```
 
-```{r, echo=FALSE, message=FALSE, results='hide', warning=FALSE}
+# Data Exploration
 
-# US food insecurity and Restaurant excess food hotspots
-state_food <- state_food %>%
-  mutate(
-    Excess_Food_Avg = mean(Avg_Excess_Food, na.rm = TRUE),
-    Hotspot = case_when(
-      Food_Insecurity > 12.46 & Avg_Excess_Food > Excess_Food_Avg ~ "High Food Insecurity & High Excess Food",
-      Food_Insecurity > 12.46 ~ "High Food Insecurity",
-      Avg_Excess_Food > Excess_Food_Avg ~ "High Excess Food",
-      TRUE ~ "Low"
-    )
-  )
+The data summary shows that most of the variables data is complete, except for the WIC redemption variable at 55% complete. PCH_LACCESS_LOWI_15_19, defined as low income and low access to stores between 2015-2019 has a large standard deviation which could be due to population migration. The mean food insecurity rate per county is at 12.5%, with a standard deviation of 3%. The highest percent of food insecurity is at 29%. As expected, the white population per county is right-skewed, meaning that most counties has high white population. The mean poverty rate in the US is at 14.5%, where some counties experience poverty rates as high as 44%.
 
-plot_usmap(data = state_food, values = "Hotspot", regions = "states") +
-  scale_fill_manual(
-    values = c(
-      "High Food Insecurity & High Excess Food" = "red",
-      "High Food Insecurity" = "orange",
-      "High Excess Food" = "yellow",
-      "Low" = "lightblue"
-    ),
-    name = "State Category"
-  ) +
-  labs(title = "US Food Insecurity vs Excess Food Hotspots (2021-2023)") +
-  theme(legend.position = "right")
+```{r}
+options(scipen = 999)   
+
+skim(combined)
 ```
+
+The histogram plots demonstrate that most of the variables are either left or right skewed. For instance, the the histogram shows most counties have a high percentage of white residents, but there are extreme cases where counties have a low white population. However, food insecurity, poverty, population of residents under the age of 18, and over 65 are normally distributed. Because the dependent variable, food insecurity, is approximately normally distributed, it is more compatible with linear regression assumptions and may improve model accuracy. The skewed independent variables show that a transformation or a model robust to non-normal predictors may be more appropriate. In addition, the scatter plots confirm that most predictors exhibit heteroscedasticity against food insecurity, meaning that the variance is not consistent across the range of predictors. Overall, the the skewed predictors, as well as the presence of outliers indicate that variable transformation or non-linear models are more adequate to predict food insecurity.
+
+```{r}
+numeric_vars<- names(combined)[sapply(combined, is.numeric)]
+combined_long <- combined %>%
+  pivot_longer(cols = all_of(numeric_vars),
+               names_to = "variable",
+               values_to = "value")
+
+ggplot(combined_long, aes(x = value)) +
+  geom_histogram(bins = 20) +
+  facet_wrap_paginate(~ variable, scales = "free", ncol = 5, nrow = 5, page = 1)
+```
+
+```{r}
+
+numeric_vars <- setdiff(names(combined)[sapply(combined, is.numeric)], "Food_insecure")
+
+combined_long <- combined %>%
+  pivot_longer(cols = all_of(numeric_vars),
+               names_to = "variable",
+               values_to = "value")
+
+ggplot(combined_long, aes(x = value, y = Food_insecure)) +
+  geom_point(alpha = 0.5, color = "blue") +
+  facet_wrap_paginate(~ variable, scales = "free_x", ncol = 5, nrow = 4, page = 1) +
+  theme_minimal() +
+  labs(x = "Variable Value", y = "Food Insecure",
+       title = "Predictors vs Food Insecure")
+
+```
+
+The top predictors highly correlated with food insecurity are poverty, median income,
 
 ```{r}
 corr_with_foodinsec <- combined %>%
   select(where(is.numeric)) %>%
-  summarise(across(everything(), ~ cor(.x, combined$FOODINSEC_21_23,
+  summarise(across(everything(), ~ cor(.x, combined$Food_insecure,
                                        use = "pairwise.complete.obs"))) %>%
   pivot_longer(everything(), names_to = "Variable", values_to = "Correlation") %>%
   arrange(desc(abs(Correlation)))
 
-tail(corr_with_foodinsec)
+corr_with_foodinsec
+```
+
+```{r, echo=FALSE, message=FALSE, results='hide', warning=FALSE}
+top_vars <- corr_with_foodinsec %>%
+  slice_max(order_by = abs(Correlation), n = 15) %>%
+  pull(Variable)
+top_vars <- setdiff(top_vars, "Food_insecure")
+
+top_data <- combined %>%
+  select(all_of(top_vars))
+
+
+ggpairs(top_data,
+        upper = list(continuous = wrap("cor", size = 2)),
+        lower = list(continuous = wrap("points", alpha = 0.5, size = 1.5)),
+        diag = list(continuous = wrap("barDiag", fill = "lightblue"))
+) + 
+theme(strip.text = element_text(face = "bold",size = 7,  angle = 50))
 ```
 
 # Data Preparation
 
-Attempt to normalize the variables that are not percent changes
+Remove outliers, Food insecurity as a binary variable to predict high insecurity.
 
 ```{r, echo=FALSE, message=FALSE, results='hide', warning=FALSE}
-combined <- combined %>%
-  mutate(
-    across(
-      # choose numeric columns
-      .cols = where(is.numeric) &
-              # exclude dependent variable
-              !matches("^FOODINSEC_21_23$") &
-              # exclude variables beginning with "PCH"
-              !matches("^PCH_"),
-      # apply log1p safely to avoid issues with 0 values
-      .fns = log1p
-    )
-  )
 
-glimpse(combined)
 
 ```
 
 ```{r}
+combined <- combined %>%
+  mutate(High_FoodInsecure = ifelse(Food_insecure >= 12, 1, 0))
+
+```
+
+```{r}
+Res_price_per_cal <- .02
+discount_rate <-1.10
+calories_per_ton <- 1652000
+additional_snap_spend <- 100
+
+combined < combined %>%
+  mutate(calories_wasted = Total_Excess_Food * calories_per_ton )%>%
+  mutate(calories_cost = calories_wasted * Res_price_per_cal) %>%
+  mutate(Recovered_calories =  calories_cost/ (additional_snap_spend* discount_rate))
+
+```
+
+```{r}
+mode_impute <- function(x) {
+  ux <- unique(x[!is.na(x)])
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
 combined <- combined %>%
   group_by(State) %>%
   mutate(across(where(is.numeric), ~ifelse(is.na(.), median(., na.rm = TRUE), .))) %>%
@@ -444,11 +328,11 @@ winsorize <- function(x, probs = c(0.01, 0.99)) {
 combined <- combined %>%
   mutate(across(where(is.numeric), winsorize))
 
-# Convert factor to numeric
+
 combined <- combined %>%
   mutate(
-    METRO23 = as.numeric(as.character(METRO23)),  # convert factor levels to numeric
-    METRO23 = as.numeric(mode_impute(METRO23))     # impute mode and ensure numeric
+    METRO23 = as.numeric(as.character(METRO23)),  
+    METRO23 = as.numeric(mode_impute(METRO23))     
   )
 
 na_counts <- colSums(is.na(combined))
@@ -485,16 +369,13 @@ cat(factor_vars, sep = "\n")
 ## rename columns for clarity
 combined <- combined %>%
   rename(
-    Foodinsecurity = FOODINSEC_21_23,
+    Foodinsecurity = Food_insecure,
     WhitePct = PCT_NHWHITE20,
     BlackPct = PCT_NHBLACK20,
-    AsianPct = PCT_NHASIAN20,
-    NativePct = PCT_NHNA20,
     HispPct = PCT_HISP20,
     TwoOrMorePct = PCT_NHTMR20,
     Medianincome = MEDHHINC21,
     low_income_low_store_access = PCH_LACCESS_LOWI_15_19,
-    no_car_and_low_store_access= PCH_LACCESS_HHNV_15_19,
     ObesityPct = PCT_OBESE_ADULTS22,
     WICChange = PCH_WIC_17_21,
     SNAPparticipantschange = PCH_SNAP_17_22,
@@ -508,43 +389,44 @@ combined <- combined %>%
     SNAP_redemptions = REDEMP_SNAPS23,
     SNAP_per_capita = PC_SNAPBEN22,
     SNAP_auth_stores = SNAPSPTH23,
-    SNAP_low_access_pct = PCT_LACCESS_SNAP19
+    SNAP_low_access_pct = PCT_LACCESS_SNAP19,
+    Pct_65_older = PCT_65OLDER20,
+    PCT_18_younger = PCT_18YOUNGER20,
+    No_car_low_store = PCH_LACCESS_LOWI_15_19 
   )
 
 model_data <- combined %>%
-  select(-State, -County)
+  select(-State, -County,-Foodinsecurity )
  
 glimpse(model_data)
 
 ```
 
 ```{r}
-selected_vars <- colnames(model_data)
-data_select <- model_data %>%
-  select(all_of(selected_vars)) %>%
-  select(where(is.numeric))
+corr_with_foodinsec2 <- model_data%>%
+  select(where(is.numeric)) %>%
+  summarise(across(everything(), ~ cor(.x, combined$High_FoodInsecure,
+                                       use = "pairwise.complete.obs"))) %>%
+  pivot_longer(everything(), names_to = "Variable", values_to = "Correlation") %>%
+  arrange(desc(abs(Correlation)))
 
-data_corr <- cor(data_select, use = "complete.obs")
-
-
-corrplot::corrplot(data_corr, method = "color", tl.col = "black", tl.srt = 45)
-head(corr_table, 20)
+corr_with_foodinsec2
   
 ```
 
 ```{r}
 # 1. Select numeric variables
-numeric_vars <- model_data %>% select(where(is.numeric))
+numeric_vars2 <- model_data %>% select(where(is.numeric))
 
 # 2. Compute correlations with Foodinsecurity
-cor_with_food <- sapply(numeric_vars, function(x) cor(x, numeric_vars$Foodinsecurity, use = "complete.obs"))
+cor_with_food <- sapply(numeric_vars2, function(x) cor(x, numeric_vars2$Foodinsecurity, use = "complete.obs"))
 
 # 3. Convert to data frame
 cor_df <- data.frame(
   Variable = names(cor_with_food),
   Correlation = round(cor_with_food, 2)
 ) %>%
-  filter(Variable != "Foodinsecurity") %>%   # remove self-correlation
+  filter(Variable != "Food_insecure") %>%   # remove self-correlation
   arrange(desc(abs(Correlation)))
 
 # 4. View table
@@ -561,8 +443,21 @@ ggplot(cor_df, aes(x = reorder(Variable, Correlation), y = Correlation)) +
 ```
 
 ```{r}
-data_plot <- lapply(names(data_select), function(col_name){
-  ggplot(data_select, aes_string(x =col_name)) +
+numeric_vars2 <- names(model_data)[sapply(model_data, is.numeric)]
+scatter_plots2 <- lapply(numeric_vars2, function(col_name){
+  ggplot(model_data, aes_string(x = col_name, y = "Foodinsecurity")) +
+    geom_point(alpha = 0.6, color = "blue") +
+    labs(title = paste("Food insecurity vs", col_name),
+         x = col_name,
+         y = "Foodinsecure") +
+    theme_minimal()
+})
+scatter_plots2
+```
+
+```{r}
+data_plot <- lapply(names(model_data), function(col_name){
+  ggplot(model_data, aes_string(x =col_name)) +
     geom_histogram(fill = "red", bins = 20, na.rm = TRUE) +
     labs(title = col_name, x = col_name, y = "count") +
     theme_minimal()    
@@ -605,7 +500,12 @@ foodinsec_test
 
 ```{r}
 # modeling all predictors
-model1 <- lm(Foodinsecurity ~ ., data = foodinsec_train )
+model1 <- glm(
+  High_FoodInsecure ~ Poverty_rate + Medianincome + calories_SNAP_part+ WhitePct + TwoOrMorePct + BlackPct + HispPct + SNAP_low_access_pct + Rural_percent +  Pct_65_older + PCT_18_younger +restaurants_per_capita
+ ,
+  data = foodinsec_train,
+  family = binomial
+)
 summary(model1)
 ```
 
