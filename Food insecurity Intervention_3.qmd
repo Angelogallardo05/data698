@@ -245,7 +245,7 @@ ggplot(combined_long, aes(x = value, y = Food_insecure)) +
 
 ```
 
-The top predictors highly correlated with food insecurity are poverty, median income,
+The top predictors high positive correlation with food insecurity are poverty, SNAP participants that have low access to stores, and calories per SNAP dollar. The only variable highly negative corrlated with food insecurity, median income, demonstrates that higher income reduces food insecurity.
 
 ```{r}
 corr_with_foodinsec <- combined %>%
@@ -278,31 +278,11 @@ theme(strip.text = element_text(face = "bold",size = 7,  angle = 50))
 
 # Data Preparation
 
-Remove outliers, Food insecurity as a binary variable to predict high insecurity.
+The NA's will be replaced by using the median of the state. Furthermore, in an attempt to normalize the predictors, large outliers are removed. If the predictors are not normalized, logistic models will be utilized to predict food insecurity. The dependent variable would be converted as a binary variable, where any value higher than the median (12%) would be classified as high food insecurity.
 
-```{r, echo=FALSE, message=FALSE, results='hide', warning=FALSE}
+Certain variables will be renamed for clarity.
 
-
-```
-
-```{r}
-combined <- combined %>%
-  mutate(High_FoodInsecure = ifelse(Food_insecure >= 12, 1, 0))
-
-```
-
-```{r}
-Res_price_per_cal <- .02
-discount_rate <-1.10
-calories_per_ton <- 1652000
-additional_snap_spend <- 100
-
-combined < combined %>%
-  mutate(calories_wasted = Total_Excess_Food * calories_per_ton )%>%
-  mutate(calories_cost = calories_wasted * Res_price_per_cal) %>%
-  mutate(Recovered_calories =  calories_cost/ (additional_snap_spend* discount_rate))
-
-```
+An additional variable, recovered calories from restaurant, will be creating using an example scenario, where SNAP allots additional dollars to purchase meals from restaurants at a discount rate. The model will used the same discount rate used in the restaurant meals program.
 
 ```{r}
 mode_impute <- function(x) {
@@ -340,6 +320,55 @@ na_columns <- names(na_counts[na_counts > 0])
 na_columns
 
 head(combined)
+
+```
+
+```{r, echo=FALSE, message=FALSE, results='hide', warning=FALSE}
+corr_with_foodinsec2 <- combined %>%
+  select(where(is.numeric)) %>%
+  summarise(across(everything(), ~ cor(.x, combined$Food_insecure,
+                                       use = "pairwise.complete.obs"))) %>%
+  pivot_longer(everything(), names_to = "Variable", values_to = "Correlation") %>%
+  arrange(desc(abs(Correlation)))
+
+corr_with_foodinsec2
+
+
+top_vars <- corr_with_foodinsec2 %>%
+  slice_max(order_by = abs(Correlation), n = 15) %>%
+  pull(Variable)
+top_vars <- setdiff(top_vars, "Food_insecure")
+
+top_data <- combined %>%
+  select(all_of(top_vars))
+
+
+ggpairs(top_data,
+        upper = list(continuous = wrap("cor", size = 2)),
+        lower = list(continuous = wrap("points", alpha = 0.5, size = 1.5)),
+        diag = list(continuous = wrap("barDiag", fill = "lightblue"))
+) + 
+theme(strip.text = element_text(face = "bold",size = 7,  angle = 60))
+
+```
+
+```{r}
+combined <- combined %>%
+  mutate(High_FoodInsecure = ifelse(Food_insecure >= 12, 1, 0))
+
+```
+
+```{r}
+Res_price_per_cal <- .02
+discount_rate <-1.10
+calories_per_ton <- 1652000
+additional_snap_spend <- 100
+
+combined < combined %>%
+  mutate(calories_wasted = Total_Excess_Food * calories_per_ton )%>%
+  mutate(calories_cost = calories_wasted * Res_price_per_cal) %>%
+  mutate(Recovered_calories =  calories_cost/ (additional_snap_spend* discount_rate))
+
 ```
 
 ```{r}
@@ -362,7 +391,7 @@ cat(numeric_vars, sep = "\n")
 
 # Only factor/character variables as a vertical list
 factor_vars <- names(combined)[sapply(combined, function(x) is.factor(x) | is.character(x))]
-cat(factor_vars, sep = "\n")
+#cat(factor_vars, sep = "\n")
 ```
 
 ```{r}
@@ -414,69 +443,18 @@ corr_with_foodinsec2
   
 ```
 
-```{r}
-# 1. Select numeric variables
-numeric_vars2 <- model_data %>% select(where(is.numeric))
-
-# 2. Compute correlations with Foodinsecurity
-cor_with_food <- sapply(numeric_vars2, function(x) cor(x, numeric_vars2$Foodinsecurity, use = "complete.obs"))
-
-# 3. Convert to data frame
-cor_df <- data.frame(
-  Variable = names(cor_with_food),
-  Correlation = round(cor_with_food, 2)
-) %>%
-  filter(Variable != "Food_insecure") %>%   # remove self-correlation
-  arrange(desc(abs(Correlation)))
-
-# 4. View table
-cor_df
-
-# 5. Plot correlations
-ggplot(cor_df, aes(x = reorder(Variable, Correlation), y = Correlation)) +
-  geom_col(fill = "steelblue") +
-  coord_flip() +
-  labs(title = "Correlation with Foodinsecurity",
-       x = "Variable",
-       y = "Correlation") +
-  theme_minimal()
-```
-
-```{r}
-numeric_vars2 <- names(model_data)[sapply(model_data, is.numeric)]
-scatter_plots2 <- lapply(numeric_vars2, function(col_name){
-  ggplot(model_data, aes_string(x = col_name, y = "Foodinsecurity")) +
-    geom_point(alpha = 0.6, color = "blue") +
-    labs(title = paste("Food insecurity vs", col_name),
-         x = col_name,
-         y = "Foodinsecure") +
-    theme_minimal()
-})
-scatter_plots2
-```
-
-```{r}
-data_plot <- lapply(names(model_data), function(col_name){
-  ggplot(model_data, aes_string(x =col_name)) +
-    geom_histogram(fill = "red", bins = 20, na.rm = TRUE) +
-    labs(title = col_name, x = col_name, y = "count") +
-    theme_minimal()    
-})
-
-data_plot
-
-
-```
-
 # Models
 
 ## Methodology
 
-This study models county level food insecurity based on demographics, economic factors, health, and government program participation. Prior research utilizes demographic statistics such as race and genders to understand the ethnic groups that may contribute the unequal access to food. This is especially true in the United States as the racial demographic of the United states is very diversified. undefined
-
-Government assistance indicators are also used as predictors. Changes in participation in SNAP, WIC, the Summer Food Program, and other support programs provide insight into how resource availability and policy implementation may influence local food access. These variables serve as proxies for demand for assistance and the adequacy of food support infrastructure.
-
-Socioeconomic conditions are represented by median household income, which is a strong determinant of food affordability and financial stability. Finally, county-level obesity rates are included because diet-related health outcomes often correlate with limited access to healthy and affordable foods. Together, these variables form a comprehensive predictive model for understanding the drivers of food insecurity across U.S. counties.
+Due to persistant feature of skewness and heteroscedastic behavior against food insecurity, the model of choice is the logistic model. This models will identify the probability of high food insecurity by county demographics, economic factors, health, and government program participation. Although some demographics had low correlation against food insecurity, the first model will include all age and race predictor because prior research included those statistics to classify those groups that may contribute the unequal access to food. This may be especially true in the United States as the racial demographic of the United states is very diversified.\
+\
+Government assistance participation predictors such as participation in SNAP, WIC, the Summer Food Program, and other support programs are included in the first model to provide additional insight on how resource availability and policy implementation may influence local food access. These variables serve as proxies for demand of assistance and the adequacy of food support infrastructure.\
+\
+Socioeconomic conditions are represented by median household income, which is a strong determinant of food affordability and financial stability. Household burden, or food resource limitations due to other financial obligations is also included because affordable foods does affect at least one member in the family , according to previous research. Together, these variables form a comprehensive predictive model for understanding the drivers of food insecurity across U.S. counties. The other variable included in the first model is the number of restaurants per county, with the hypothesize that access to restaurants will be a significant factor in predicting high food insecurity.\
+\
+\
+Finally, the last model will include a potential calories that could be saved through SNAP and restaurant meal intervention. The recovered calories is the amount of restaurant meals that additional SNAP funds can recover if it was sold at a discount, as implemented in some areas. 
 
 ## linear model
 
@@ -501,7 +479,7 @@ foodinsec_test
 ```{r}
 # modeling all predictors
 model1 <- glm(
-  High_FoodInsecure ~ Poverty_rate + Medianincome + calories_SNAP_part+ WhitePct + TwoOrMorePct + BlackPct + HispPct + SNAP_low_access_pct + Rural_percent +  Pct_65_older + PCT_18_younger +restaurants_per_capita
+  High_FoodInsecure ~ Poverty_rate + Medianincome + calories_SNAP_part+ WhitePct + TwoOrMorePct + BlackPct + HispPct + SNAP_low_access_pct + Rural_percent +  Pct_65_older + PCT_18_younger +restaurants_per_capita + Household_burden
  ,
   data = foodinsec_train,
   family = binomial
