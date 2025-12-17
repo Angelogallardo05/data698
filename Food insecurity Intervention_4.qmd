@@ -30,19 +30,19 @@ There are numerous real-world applications for a predictive model that connects 
 
 **Research Questions**
 
--   Can a machine learning model accurately predict the food insecurity rate in the US?
+-   Can a machine learning model accurately predict the food insecurity rate by US county?
 
 -   Which demographic, socioeconomic, and food assistance indicators are most significant in predicting food insecurity?
 
 -   Is expanding the Restaurant Meal Program an effective intervention? If so, where?
 
-I hypothesize that food recovery from restaurants may help reduce food insecurity in areas with limited store accessibility.
+I hypothesize that food recovery from restaurants may help reduce food insecurity in counties with limited
 
 # Literature Review
 
 Measuring Food insecurity and Hunger in the United States [@carlson1999measuring] developed a standardized household scale to quantify food insecurity in the US. The measurement tool used categorical household survey responses to quantify food insecurity severity, ranging from concerns about food supply to skipping meals or experiencing hunger. This benchmark classifies food security to be defined as assured access at all times to enough food for an active healthy life. This study also defined malnutrition as a more severe form of food insecurity, which is not the case in the United States The scale revealed that severe food insecurity was more common in households with children under eighteen, minority households, and among households with low income-to-poverty ratios. This scale serves as a the foundation that links food insecurity to socioeconomic factors. However, the measurement is descriptive rather then a predictive model. A predictive model can utilize this work by including these factors along with economic access and recoverable calories to estimate the probability that a county reduces food insecurity.
 
-A data-driven approach improves food insecurity crisis prediction [@lentz2019data]highlighted the similar challenges in mesuring food insecurity globally. The research arguest that Integrated Food Security Phase Classification (IPC), a global framework that classifies food insecurity, does not make use of the readily available secondary data, in a replicable and transparent manner. Furthermore, there is no current food security early warning and monitoring system that incorporates readily available data into a predictive model. As a result, these methods limit timely, targeted humanitarian response. The research builds linear and log-linear models using three readily available secondary data measures, weather and price fluctuations, geographic variations, demographics, and intra-annual seasonal trends to predict food security at the sub national level. Their findings show that their model correctly predicts 83% to 99% of the most food insecure clusters, while the IPC’s approach only predicts between 0% and 10%. Although the model is an improvement from the IPC's approach, the model does not incorporate solutions to reduce food insecurity. Meanwhile, the U.S, unlike other countries, food insecurity is less driven by weather shocks and geographic shock, but by socioeconomic factors and access to federal assistance programs. By accurately predicting high food insecurity, the US government can assess whether counties are steering towards high food insecurity to perform early intervention.
+A data-driven approach improves food insecurity crisis prediction [@lentz2019data]highlighted the similar challenges in measuring food insecurity globally. The research argues that Integrated Food Security Phase Classification (IPC), a global framework that classifies food insecurity, does not make use of the readily available secondary data, in a replicable and transparent manner. Furthermore, there is no current food security early warning and monitoring system that incorporates readily available data into a predictive model. As a result, these methods limit timely, targeted humanitarian response. The research builds linear and log-linear models using three readily available secondary data measures, weather and price fluctuations, geographic variations, demographics, and intra-annual seasonal trends to predict food security at the sub national level. Their findings show that their model correctly predicts 83% to 99% of the most food insecure clusters, while the IPC’s approach only predicts between 0% and 10%. Although the model is an improvement from the IPC's approach, the model does not incorporate solutions to reduce food insecurity. Meanwhile, the U.S, unlike other countries, food insecurity is less driven by weather shocks and geographic shock, but by socioeconomic factors and access to federal assistance programs. By accurately predicting high food insecurity, the US government can assess whether counties are steering towards high food insecurity to perform early intervention.
 
 Several studies examine the relationship between food waste and food insecurity. Leveraging Machine Learning for Food Waste Reduction: An Analysis of Predictive Models [@yang2024foodwaste] applied machine learning models, including Random Forests, to predict food waste using data on household consumption patterns, retail demand, and food service estimates. The study concluded that household-level food waste estimates are the most influential predictor driving food waste predictions at the per-capita level. However, hhousehold data may be difficult to collect reliably, due to self-reporting biases and lack of incentives for participation, limiting the practicality of household-level interventions. As a result, using household food excess as a potential intervention may be less practical or effective to redistribute excess food.
 
@@ -86,6 +86,7 @@ library(car)
 library(tibble)
 library(nlme)
 library(modelsummary)
+library(olsrr)
 ```
 
 ## Data
@@ -157,7 +158,7 @@ state_lookup <- data.frame(
 
 fi <- fi %>%
   left_join(state_lookup, by = c("State" = "State")) %>%
-  mutate(State = StateAbbrev) %>%       # replace with abbreviations
+  mutate(State = StateAbbrev) %>%       
   select(-StateAbbrev)
 
 fi <- fi %>% 
@@ -375,7 +376,7 @@ corr_with_foodinsec
 ```
 
 ```{r}
-combined <- combined %>%
+county_food <- combined %>%
   mutate(
     weighted.mean(Food_insecure, Population, na.rm = TRUE),
     Excess_Food_per_capita = Total_Excess_Food / Population
@@ -389,9 +390,9 @@ county_food <- county_food %>%
   mutate(
     # Food insecurity percentiles (population-weighted)
     FI_class = cut(
-      Food_Insecurity_wt,
+      Food_insecure,
       breaks = quantile(
-        Food_Insecurity_wt,
+       Food_insecure,
         probs = c(0, 0.25, 0.50, 0.75, 1),
         na.rm = TRUE
       ),
@@ -421,6 +422,11 @@ county_food <- county_food %>%
       include.lowest = TRUE
     )
   )
+
+county_food <- county_food %>%
+  rename(fips = FIPS)
+
+head(county_food)
 ```
 
 ```{r}
@@ -429,16 +435,16 @@ plot_usmap(
   values = "FI_class",
   regions = "counties"
 ) +
-scale_fill_manual(
-  values = c(
-    "Lowest 25%"  = "#edf8fb",
-    "25–50%"      = "#b2e2e2",
-    "50–75%"      = "green",
-    "Highest 25%" = "darkblue"
-  ),
-  name = "Food Insecurity\nPercentile",
-  na.translate = FALSE
-) +
+  scale_fill_manual(
+    values = c(
+      "Lowest 25%"  = "#edf8fb",
+      "25–50%"      = "#b2e2e2",
+      "50–75%"      = "green",
+      "Highest 25%" = "darkblue"
+    ),
+    name = "Food Insecurity\nPercentile",
+    na.translate = FALSE
+  ) +
   labs(
     title = "Population-Weighted Food Insecurity by County"
   ) +
@@ -481,7 +487,7 @@ scale_fill_manual(
 county_food <- county_food %>%
   mutate(
     high_food_insec =
-      Food_Insecurity_wt >= quantile(Food_Insecurity_wt, 0.75, na.rm = TRUE),
+      Food_insecure >= quantile(Food_insecure, 0.75, na.rm = TRUE),
 
     high_excess_food =
       Excess_Food_per_capita >= quantile(Excess_Food_per_capita, 0.75, na.rm = TRUE),
@@ -817,15 +823,13 @@ qqline(model_data$Foodinsecurity, col = 2)
 
 ## Methodology
 
-Due to persistent feature of skewness and heteroscedastic behavior against food insecurity, a logistic model seems like the appropriate fit. This approach estimates the probability that a county experiences high food insecurity based on its demographic, economic, health, and government program characteristics. In this framework, food insecurity is classified as “high” when the county’s rate is at or above the third percentile threshold. Although some demographic variables had low correlation against food insecurity, the first model will include socioeconomic, demographics, age and race predictor because prior research included those statistics to classify those groups that may contribute the unequal access to food. This may be especially true in the United States as the racial demographic of the United states is very diversified.\
-\
-Government assistance participation, SNAP, is included in the first model to provide additional insight on how resource availability and policy implementation may influence local food access. These variables serve as proxies for demand of assistance and the adequacy of food support infrastructure.\
+Due to persistent feature of skewness and heteroscedastic behavior against food insecurity, WL and GLS model seems appropriate to predict food insecurity. This approach predicts the rate of food insecurity based on its demographic, economic, health, and government program acccessability. In this framework, food insecurity rate is measured for easy predictability as well as forward looking. Although some demographic variables had low correlation against food insecurity, the first model will include socioeconomic, demographics, age and race predictor because prior research included those statistics to classify those groups that may contribute the unequal access to food. This may be especially true in the United States as the racial demographic of the United states is very diversified.\
 \
 Socioeconomic conditions are represented by median household income, which is a strong determinant of food affordability and financial stability. Household burden, or food resource limitations due to other financial obligations is also included because affordable foods does affect at least one member in the family , according to previous research. Together, these variables form a comprehensive predictive model for understanding the drivers of food insecurity across U.S. counties. The other variable included in the first model is the number of restaurants per county, with the hypothesize that access to restaurants will be a significant factor in predicting high food insecurity.\
 \
 The second model includes potential calories that could be saved through SNAP and restaurant meal intervention. These recovered calories are the amount of restaurant meals that additional SNAP funds can recover if it was sold at a discount, as implemented in some areas. The second model will remove the insignificant variables for better interpretability.
 
-## Linear models
+## Models
 
 ```{r}
 
@@ -846,7 +850,7 @@ foodinsec_test
 
 ```
 
-The first logistic regression model demonstrated strong explanatory power, with the deviance reduced by more than 50% from the null model. An AIC of 1112.8 signals that the model fits efficiently without evidence of overfitting. Several predictors including poverty rate, age composition, and metro status were not statistically significant when controlling other factors. In contrast, the most influential predictors of high food insecurity include median household income, household expense burden, adult obesity rates, and the percentage of rural residents. The model also confirms that limited access to SNAP-authorized stores significantly increases the likelihood of high food insecurity. Interestingly, rurality was associated with a lower probability of high food insecurity after adjusting for other socioeconomic and access-related factors. This may be due to alternative food supply channels within rural communities, such as local food production, or greater reliance on community-based resources. Model 1 did not include the intervention prediction as it is the baseline where no intervention is enacted.
+The first WLS regression model explained 73% of the county level food insecurity rate. The key drivers for predicting food insecurity are the county's poverty rate, household burden, SNAP recipients with low access to stores, higher percentage of families with children under 18, and multiracial families. Interestingly, rural counties show slightly lower food insecurity, may be due to local affordable options such as farms. The residual histogram plot shows a normal distribution with a mean of -.21; however, the residuals-versus-fitted plot reveals diagonal banding and heteroskedasticity, reflecting the discrete nature of the outcome and non-constant variance across fitted values.
 
 ```{r}
 # modeling all predictors
@@ -874,9 +878,18 @@ vif_table <- tibble(
 vif_table
 ```
 
-The second model with the intervention variable performed similar results as the first model. With an AIC of 1127.5, the model did not experience significant predictive performance loss compared to the baseline model. Furthermore, after removing the insignificant variables. the model remained strong and became more interpretable. More importantly, several predictors increased in statistical significance, indicating that the removal of weaker variables reduced multicollinearity and improved model stability. Overall, the intervention model is both statistically robust and better suited for evaluating the association with high restaurant food waste. Potential calories recovered from restaurants is positively associated with high food insecurity. This indicates that recovery interventions could be geographically targeted to high insecurity, high-waste counties.
+```{r}
+mean(model1$residuals)
+
+ols_plot_resid_hist(model1) 
+ols_plot_resid_fit(model1)
+
+```
+
+The second model, a generalized least squares (GLS) specification, improves model fit by accounting for heteroskedasticity through a population-based variance structure. The estimated variance power parameter (−0.12) implies a residual variance decreases with county population size, confirming that smaller counties exhibit greater outcome variability. As with the weighted regression results, poverty rate, household burden, adult obesity rates, and the proportion of multiracial residents remained strong predictors of food insecurity. The most significant predictor in this model is limited SNAP access, with a one–percentage-point increase in SNAP store inaccessibility associated with an approximately 0.22 percentage-point increase in food insecurity. Residual diagnostics show improved centering around zero relative to the weighted OLS model, indicating successful variance stabilization. However, a mild diagonal shape pattern remained, additional interactions or nonlinear dynamics may improve the model.
 
 ```{r}
+set.seed(12345)
 model2 <- nlme::gls(
   Foodinsecurity~ Poverty_rate + Medianincome +  adult_obese_rate+ TwoOrMorePct + BlackPct + HispPct + SNAP_low_access_pct + log1p(HouseHolds_LowAcces_NoCar)+ log1p(SNAP_auth_stores) + Rural_percent + PCT_18_younger  + Household_burden
  ,
@@ -900,11 +913,24 @@ vif_table
 ```
 
 ```{r}
-model3 <- lm(
-  Foodinsecurity~ Poverty_rate + Medianincome  + adult_obese_rate+ TwoOrMorePct + BlackPct + HispPct + SNAP_low_access_pct + log1p(HouseHolds_LowAcces_NoCar)+ log1p(SNAP_auth_stores) + Rural_percent + PCT_18_younger  + Household_burden + RMP_county 
+plot(
+  fitted(model2),
+  resid(model2, type = "normalized"),
+  xlab = "Fitted values",
+  ylab = "Normalized residuals",
+  main = "GLS: Residuals vs Fitted"
+)
+abline(h = 0, col = "red")
+```
+
+The last model is the gls model includes the Restaurant meal program participation as well as the senior population. This model indicates that the current RMP programs does not significanlty reduce county level food insecurity. Given that food insecurity is strongly associated with access limitations, demographics, and financial burdens, the results imply that targeted expansion of RMP eligibility to counties facing mobility and socioeconomic constraints may improve program effectiveness.
+
+```{r}
+model3 <- nlme::gls(
+  Foodinsecurity~ Poverty_rate + Medianincome +  adult_obese_rate+ TwoOrMorePct + BlackPct + HispPct + SNAP_low_access_pct + log1p(HouseHolds_LowAcces_NoCar)+ log1p(SNAP_auth_stores) + Rural_percent + PCT_18_younger  + Household_burden+ Pct_65_older+ RMP_county
  ,
   data = foodinsec_train,
-  weights = Population
+   weights = varPower(form = ~ Population)
 )
 summary(model3)
 
@@ -924,13 +950,11 @@ vif_table <- tibble(
 vif_table
 ```
 
-Restaurant meal are
-
 ```{r}
 models <- list(
   "OLS (Weighted)" = model1,  
   "GLS (Pop-Weighted)" = model2, 
-  "OLS + RMP" = model3           
+  "GLS + RMP" = model3           
 )
 ```
 
@@ -967,44 +991,12 @@ modelsummary(
 ```
 
 ```{r}
-modelsummary(
-  models,
-  statistic = "({std.error})",
-  stars = TRUE,
-  gof_map = c(
-    "nobs",
-    "r.squared",
-    "adj.r.squared",
-    "rmse"
-  ),
-  coef_map = c(
-    "Poverty_rate" = "Poverty rate (%)",
-    "Medianincome" = "Median household income",
-    "adult_obese_rate" = "Adult obesity rate (%)",
-    "TwoOrMorePct" = "Two or more races (%)",
-    "BlackPct" = "Black population (%)",
-    "HispPct" = "Hispanic population (%)",
-    "SNAP_low_access_pct" = "Low SNAP access (%)",
-    "log1p(HouseHolds_LowAcces_NoCar)" = "HH low access & no vehicle (log)",
-    "log1p(SNAP_auth_stores)" = "SNAP authorized stores (log)",
-    "Rural_percent" = "Rural population (%)",
-    "PCT_18_younger" = "Under 18 (%)",
-    "Household_burden" = "Household burden",
-    "RMP_stateRMP" = "RMP state"
-  ),
-  title = "Comparison of Food Insecurity Models"
-)
-```
-
-```{r}
 
 foodinsec_test$pred_m1 <- predict(model1, newdata = foodinsec_test)
 
-
 foodinsec_test$pred_m2 <- predict(model2, newdata = foodinsec_test)
 
-
-foodinsec_test$pred_m3 <- predict(model3, newdata = foodinsec_test, type = "response")
+foodinsec_test$pred_m3 <- predict(model3, newdata = foodinsec_test)
 ```
 
 ```{r}
@@ -1020,37 +1012,52 @@ rmse_m3
 
 ```{r}
 foodinsec_test <- foodinsec_test %>%
-  mutate(
-    resid_m1 = Foodinsecurity - pred_m1,
-    resid_m2 = Foodinsecurity - pred_m2,
-    resid_m3 = Foodinsecurity - pred_m3
-  )
-
-resid_summary <- foodinsec_test %>%
-  group_by(RMP_county) %>%
-  summarise(
-    mean_resid_m1 = mean(resid_m1, na.rm = TRUE),
-    mean_resid_m2 = mean(resid_m2, na.rm = TRUE),
-    mean_resid_m3 = mean(resid_m3, na.rm = TRUE),
-    n = n()
-  )%>%
-  mutate(across(where(is.numeric), ~ round(.x, 2)))
-
-resid_summary
+  mutate(resid_m2 = Foodinsecurity - pred_m2)
 ```
 
-## Intervention
+```{r}
 
-Decreasing gap between calories per snap store redemption and adequate monthly calorie through restaurant meal purchases.
 
-Adequate caloric intake could be attainable in half of the US counties under an expanded Restaurant Meals Program in which approximately 30% of SNAP benefits are allocated toward purchasing recovered restaurant food.
+ggplot(foodinsec_test, aes(Poverty_rate, resid_m2)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "loess", se = FALSE, color = "red") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(
+    title = "Residuals vs Poverty Rate (GLS)",
+    x = "Poverty Rate (%)",
+    y = "Residual (Observed − Predicted)"
+  )
+```
+
+```{r}
+ggplot(foodinsec_test, aes(SNAP_low_access_pct, resid_m2)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "loess", se = FALSE, color = "red") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(
+    title = "Residuals vs SNAP Low Access (GLS)",
+    x = "Low SNAP Access (%)",
+    y = "Residual"
+  )
+```
+
+```{r}
+ggplot(foodinsec_test, aes(Rural_percent, resid_m2)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "loess", se = FALSE, color = "red") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+```
+
+## Intervention counties
+
+By predicting the highest food insecured counties, we can choose the counties that could benefit by the restaurant meal program.
 
 ```{r}
 
 
 foodinsec_test <- foodinsec_test %>%
   mutate(
-    FI_pred = pred_m1
+    FI_pred = pred_m2
   )
 ```
 
@@ -1062,7 +1069,7 @@ foodinsec_test <- foodinsec_test %>%
 ```
 
 ```{r}
-priority_counties <- foodinsec_test %>%
+ foodinsec_test <- foodinsec_test %>%
   filter(
     High_need == TRUE,
     RMP_county == "No_RMP"
@@ -1072,19 +1079,14 @@ priority_counties
 ```
 
 ```{r}
-foodinsec_test <- foodinsec_test %>%
-  rename(fips = FIPS) %>%
-  mutate(
-    RMP_priority = ifelse(
-      High_need == TRUE & RMP_county == "No_RMP",
-      "Priority (No RMP)",
-      "Other"
-    )
+foodinsec_test_plot <- foodinsec_test %>%
+  filter(
+    !is.na(RMP_priority),
+    !is.na(fips)
   )
 
-
 plot_usmap(
-  data = foodinsec_test,
+  data = foodinsec_test_plot,
   values = "RMP_priority",
   regions = "counties"
 ) +
@@ -1103,15 +1105,12 @@ plot_usmap(
   theme(
     legend.position = "right"
   )
-
 ```
 
 \###
 
-Restaurant meal plans could be helpful for counties with vulnerable populations such as disabled, elderly, and homeless.
-
 # Conclusion
 
-The intervention model logistic model that includes the intervention term (Recovered_calories) represents the potential expansion of the Restaurant Meal Plan. This indicates that high food insecurity areas also tends to have higher recoverable restaurant food waste. The model also indicates that counties with limited access to SNAP-authorized stores may also experience with higher food insecurity, reinforcing the potential impact of the RMP expansion. Together, these predictors could help identify counties where the Restaurant meal Plan can be expanded. Despite using a focused set of variables, the intervention model maintains high predictive performance, achieving an accuracy of 85% while preserving interpretability. Although, additional determinants could be inorporated in future models, the current factors modeled provides a stable structure for identifying high-risk areas.
+The GLS model can
 
 # References
